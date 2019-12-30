@@ -6,7 +6,7 @@
 # executable and main directories #
 ###################################
 
-EXEC := my-exe
+EXEC := program
 SDIR := source
 IDIR := include
 ODIR := obj
