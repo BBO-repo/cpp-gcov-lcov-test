@@ -3,5 +3,5 @@
 
 void helloMake(void);
 
-#endif
+#endif // PLOTTER_H
 
