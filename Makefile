@@ -1,14 +1,11 @@
-########################
-# c++ makefile project #
-########################
-
 ###################################
 # executable and main directories #
 ###################################
 
 EXEC := program
 SDIR := source
-IDIR := include
+IDIR := $(sort $(dir $(wildcard $(SDIR)/*/)))
+IDIR := $(filter-out $(SDIR)/,$(IDIR)) # remove SDIR from list of include
 ODIR := obj
 BDIR := build
 
@@ -35,7 +32,7 @@ CXXFLAGS += -O3 -DNDEBUG
 endif
 
 ################# dependencies #################
-SRCS := $(wildcard $(SDIR)/*.cpp)
+SRCS := $(wildcard $(SDIR)/*.cpp) $(wildcard $(SDIR)/*/*.cpp)
 OBJS := $(patsubst $(SDIR)/%.cpp, $(ODIR)/%.o, $(SRCS))
 DEPS := $(OBJS:%.o=%.d)
 
@@ -45,40 +42,44 @@ DEPS := $(OBJS:%.o=%.d)
 # list of non-file based targets:
 .PHONY: depend clean all
 
+print:
+	echo "[INFO] IDIR:" $(IDIR)
+
 # default target
-all: $(BDIR)/$(EXEC)
+# all: $(BDIR)/$(EXEC)
 
-# build executable - link
-$(BDIR)/$(EXEC): $(OBJS) | $(BDIR)
-	$(CXX) -o $(BDIR)/$(EXEC) $(OBJS) $(LDFLAGS)
 
-# include all .d files to track if an header has been modified without any implementation modification
--include $(DEPS)
+# # build executable - link
+# $(BDIR)/$(EXEC): $(OBJS) | $(BDIR)
+# 	$(CXX) -o $(BDIR)/$(EXEC) $(OBJS) $(LDFLAGS)
 
-# build objects - compile
-$(ODIR)/%.o: $(SDIR)/%.cpp | $(ODIR)
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -MMD -c -o $@ $<
+# # include all .d files to track if an header has been modified without any implementation modification
+# -include $(DEPS)
 
-###############################################
-# build directories if do not already present #
-###############################################
-# build object directory if not already exist
-$(ODIR):
-	echo "[INFO] object directory is missing so building directory:" $(ODIR)
-	mkdir -p $@
+# # build objects - compile
+# $(ODIR)/%.o: $(SDIR)/%.cpp | $(ODIR)
+# 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -MMD -c -o $@ $<
 
-# build build directory if not already exist
-$(BDIR):
-	echo "[INFO] build directory is missing so building directory:" $(BDIR)
-	mkdir -p $@
+# ###############################################
+# # build directories if do not already present #
+# ###############################################
+# # build object directory if not already exist
+# $(ODIR):
+# 	echo "[INFO] object directory is missing so building directory:" $(ODIR)
+# 	mkdir -p $@
 
-############
-# cleaning #
-############
-# only remove directory content
-clean:
-	rm $(ODIR)/*.o $(ODIR)/*.d $(BDIR)/$(EXEC)
+# # build build directory if not already exist
+# $(BDIR):
+# 	echo "[INFO] build directory is missing so building directory:" $(BDIR)
+# 	mkdir -p $@
 
-# remove directories
-dist-clean:
-	rm -r $(ODIR)/ $(BDIR)/
+# ############
+# # cleaning #
+# ############
+# # only remove directory content
+# clean:
+# 	rm $(ODIR)/*.o $(ODIR)/*.d $(BDIR)/$(EXEC)
+
+# # remove directories
+# dist-clean:
+# 	rm -r $(ODIR)/ $(BDIR)/
