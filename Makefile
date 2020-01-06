@@ -55,6 +55,9 @@ all: $(BDIR)/$(EXEC)
 print:
 	echo "[INFO] TESTS:" $(TEST_SRCS)
 
+test-coverage: CXXFLAGS += $(BDIR)/$(TEST_EXEC)
+test-coverage: $(BDIR)/$(TEST_EXEC)
+
 test: $(BDIR)/$(TEST_EXEC)
 
 # build executable - link
@@ -62,7 +65,7 @@ $(BDIR)/$(EXEC): $(OBJS) | $(BDIR)
 	$(CXX) -o $(BDIR)/$(EXEC) $(OBJS) $(LDFLAGS)
 
 $(BDIR)/$(TEST_EXEC): $(TEST_OBJS) | $(BDIR)
-	$(CXX) -o $(BDIR)/$(TEST_EXEC) $(TEST_OBJS) --coverage $(LDFLAGS)
+	$(CXX) -o $(BDIR)/$(TEST_EXEC) $(TEST_OBJS) $(LDFLAGS)
 
 # include all .d files to track if an header has been modified without any implementation modification
 -include $(DEPS)
@@ -72,7 +75,7 @@ $(ODIR)/%.o: $(SDIR)/%.cpp | $(ODIR)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -MMD -c -o $@ $<
 
 $(ODIR)/%.o: $(TDIR)/%.cpp | $(ODIR)
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) --coverage -MMD -c -o $@ $<
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -MMD -c -o $@ $<
 
 ###############################################
 # build directories if do not already present #
