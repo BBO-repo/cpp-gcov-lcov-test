@@ -55,7 +55,7 @@ all: $(BDIR)/$(EXEC)
 print:
 	echo "[INFO] TESTS:" $(TEST_SRCS)
 
-test-coverage: CXXFLAGS += $(BDIR)/$(TEST_EXEC)
+test-coverage: CXXFLAGS += --coverage
 test-coverage: $(BDIR)/$(TEST_EXEC)
 
 test: $(BDIR)/$(TEST_EXEC)
